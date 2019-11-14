@@ -94,7 +94,7 @@ exports.login = (req, res) => {
 // Get any user's details
 exports.getUserDetails = (req, res) => {
     let userData = {};
-    db.doc(`users/${req.params.handle}`).get()
+    db.doc(`/users/${req.params.handle}`).get()
         .then(doc => {
             if (doc.exists) {
                 userData.user = doc.data();
@@ -130,7 +130,7 @@ exports.getUserDetails = (req, res) => {
 // Get own user details
 exports.getAuthenticatedUser = (req, res) => {
     let userData = {};
-    db.doc(`/ users / ${req.user.handle}`).get()
+    db.doc(`/users/${req.user.handle}`).get()
         .then(doc => {
             if (doc.exists) {
                 userData.credentials = doc.data();
@@ -173,7 +173,7 @@ exports.getAuthenticatedUser = (req, res) => {
 exports.addUserDetails = (req, res) => {
     let userDetails = reduceUserDetails(req.body);
 
-    db.doc(`/ users / ${req.user.handle}`)
+    db.doc(`/users/${req.user.handle}`)
         .update(userDetails)
         .then(() => {
             return res.json({ message: 'Details updated successfully' });

@@ -4,6 +4,10 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 // TIER
 import jwtDecode from 'jwt-decode';
 
+// Redux
+import { Provider } from 'react-redux';
+import store from './redux/store';
+
 // MUI
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
@@ -56,9 +60,9 @@ if (token) {
 function App() {
   return (
     <MuiThemeProvider theme={theme}>
-      <div className="App">
+      <Provider store={store}>
         <Router>
-          <Navbar></Navbar>
+          <Navbar />
           <div className="container">
             <Switch className="container">
               <Route exact path="/" component={home} />
@@ -67,7 +71,7 @@ function App() {
             </Switch>
           </div>
         </Router>
-      </div>
+      </Provider>
     </MuiThemeProvider>
   );
 }
