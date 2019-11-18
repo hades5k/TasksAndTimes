@@ -1,28 +1,26 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 // TIER
-import jwtDecode from 'jwt-decode';
-import axios from 'axios';
+import jwtDecode from "jwt-decode";
+import axios from "axios";
 
 // Redux
-import { Provider } from 'react-redux';
-import store from './redux/store';
-import { SET_AUTHENTICATED } from './redux/types';
-import { logoutUser, getUserData } from './redux/actions/userActions';
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import { SET_AUTHENTICATED } from "./redux/types";
+import { logoutUser, getUserData } from "./redux/actions/userActions";
 
 // MUI
-import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
-import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
-import teal from '@material-ui/core/colors/teal';
-import deepOrange from '@material-ui/core/colors/deepOrange';
-import themeObject from './util/theme';
+import { ThemeProvider } from "@material-ui/core/styles";
+import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import themeObject from "./util/theme";
 
-import './App.css';
+import "./App.css";
 
 // Components
-import Navbar from './components/Navbar';
-import AuthRoute from './components/AuthRoute';
+import Navbar from "./components/Navbar";
+import AuthRoute from "./components/AuthRoute";
 
 // Pages
 import home from "./pages/home";
@@ -36,17 +34,17 @@ if (token) {
   const decodedToken = jwtDecode(token);
   if (decodedToken.exp * 1000 < Date.now()) {
     store.dispatch(logoutUser());
-    window.location.href = '/login';
+    window.location.href = "/login";
   } else {
     store.dispatch({ type: SET_AUTHENTICATED });
-    axios.defaults.headers.common['Authorization'] = token;
+    axios.defaults.headers.common["Authorization"] = token;
     store.dispatch(getUserData());
   }
 }
 
 function App() {
   return (
-    <MuiThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <Provider store={store}>
         <Router>
           <Navbar />
@@ -59,7 +57,7 @@ function App() {
           </div>
         </Router>
       </Provider>
-    </MuiThemeProvider>
+    </ThemeProvider>
   );
 }
 

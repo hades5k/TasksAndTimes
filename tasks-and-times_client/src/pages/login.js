@@ -16,35 +16,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import AppIcon from '../images/icon.png';
 
-const styles = {
-    form: {
-        textAlign: 'center',
-    },
-    image: {
-        margin: '20px auto',
-    },
-    pageTitle: {
-        margin: '10px auto',
-    },
-    textField: {
-        margin: '10px auto',
-    },
-    button: {
-        marginTop: 20,
-        position: 'relative',
-    },
-    progress: {
-        position: 'absolute',
-    },
-    customError: {
-        color: 'red',
-        fontSize: '0.8rem',
-        marginTop: 10,
-    },
-    signupText: {
-        marginTop: 10,
-    }
-};
+const styles = (theme) => ({
+    ...theme.spreadThis,
+});
 
 class login extends Component {
 

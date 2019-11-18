@@ -12,7 +12,8 @@ import Typography from '@material-ui/core/Typography';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-const styles = {
+const styles = (theme) => ({
+    ...theme.spreadThis,
     card: {
         display: 'flex',
         marginBottom: 20,
@@ -24,7 +25,7 @@ const styles = {
     content: {
         padding: 25,
     },
-}
+});
 
 class Scream extends Component {
     render() {
