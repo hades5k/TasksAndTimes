@@ -19,8 +19,8 @@ import themeObject from "./util/theme";
 import "./App.css";
 
 // Components
-import Navbar from "./components/Navbar";
-import AuthRoute from "./components/AuthRoute";
+import Navbar from "./components/layout/Navbar";
+import AuthRoute from "./util/AuthRoute";
 
 // Pages
 import home from "./pages/home";

@@ -1,122 +1,145 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 // Redux
-import { connect } from 'react-redux';
-import { loginUser } from '../redux/actions/userActions';
+import { connect } from "react-redux";
+import { loginUser } from "../redux/actions/userActions";
 
 // MUI
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-import AppIcon from '../images/icon.png';
+import AppIcon from "../images/icon.png";
 
-const styles = (theme) => ({
-    ...theme.spreadThis,
+const styles = theme => ({
+  ...theme.spreadThis
 });
 
 class login extends Component {
+  constructor() {
+    super();
+    this.state = {
+      email: "",
+      password: "",
+      errors: {}
+    };
+  }
 
-    constructor() {
-        super();
-        this.state = {
-            email: '',
-            password: '',
-            errors: {},
-        }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.UI.errors) {
+      this.setState({ errors: nextProps.UI.errors });
     }
+  }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.UI.errors) {
-            this.setState({ errors: nextProps.UI.errors });
-        }
-    }
+  handleSubmit = event => {
+    event.preventDefault();
 
-    handleSubmit = (event) => {
-        event.preventDefault();
-
-        const userData = {
-            email: this.state.email,
-            password: this.state.password,
-        }
-
-        // Redux
-        this.props.loginUser(userData, this.props.history);
+    const userData = {
+      email: this.state.email,
+      password: this.state.password
     };
 
-    handleChange = (event) => {
-        this.setState({
-            [event.target.name]: event.target.value
-        });
-    };
+    // Redux
+    this.props.loginUser(userData, this.props.history);
+  };
 
-    render() {
-        const { classes, UI: { loading } } = this.props;
-        const { errors } = this.state;
+  handleChange = event => {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
 
-        return (
-            <Grid container className={classes.form}>
-                <Grid item xs />
-                <Grid item xs>
-                    <img src={AppIcon} alt="" className={classes.image} />
-                    <Typography variant="h2" className={classes.pageTitle}>Login</Typography>
-                    <form noValidate onSubmit={this.handleSubmit}>
-                        <TextField
-                            id="email" name="email"
-                            type="email" label="Email"
-                            className={classes.textField}
-                            helperText={errors.email}
-                            error={errors.email ? true : false}
-                            value={this.state.email} onChange={this.handleChange} fullWidth />
-                        <TextField
-                            id="password" name="password"
-                            type="password" label="Password"
-                            className={classes.password}
-                            helperText={errors.password}
-                            error={errors.password ? true : false}
-                            value={this.state.password} onChange={this.handleChange} fullWidth />
-                        {errors.general && (
-                            <Typography variant="body2" className={classes.customError}>{errors.general}</Typography>
-                        )}
-                        <Button type="submit" variant="contained" color="primary"
-                            className={classes.button}
-                            disabled={loading}>
-                            {loading && (
-                                <CircularProgress size={30} className={classes.progress} />
-                            )}
-                            Login
-                        </Button>
-                        <br />
-                        <Typography variant="body2" className={classes.signupText}>
-                            Don't have an account? Sign up <Link to='/signup'>here</Link>
-                        </Typography>
-                    </form>
-                </Grid>
-                <Grid item xs />
-            </Grid>
-        )
-    }
+  render() {
+    const {
+      classes,
+      UI: { loading }
+    } = this.props;
+    const { errors } = this.state;
+
+    return (
+      <Grid container className={classes.form}>
+        <Grid item xs />
+        <Grid item xs>
+          <img src={AppIcon} alt="" className={classes.image} />
+          <Typography variant="h2" className={classes.pageTitle}>
+            Login
+          </Typography>
+          <form noValidate onSubmit={this.handleSubmit}>
+            <TextField
+              id="email"
+              name="email"
+              type="email"
+              label="Email"
+              className={classes.textField}
+              helperText={errors.email}
+              error={errors.email ? true : false}
+              value={this.state.email}
+              onChange={this.handleChange}
+              fullWidth
+            />
+            <TextField
+              id="password"
+              name="password"
+              type="password"
+              label="Password"
+              className={classes.password}
+              helperText={errors.password}
+              error={errors.password ? true : false}
+              value={this.state.password}
+              onChange={this.handleChange}
+              fullWidth
+            />
+            {errors.general && (
+              <Typography variant="body2" className={classes.customError}>
+                {errors.general}
+              </Typography>
+            )}
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              disabled={loading}
+            >
+              {loading && (
+                <CircularProgress size={30} className={classes.progress} />
+              )}
+              Login
+            </Button>
+            <br />
+            <Typography variant="body2" className={classes.signupText}>
+              Don't have an account? Sign up <Link to="/signup">here</Link>
+            </Typography>
+          </form>
+        </Grid>
+        <Grid item xs />
+      </Grid>
+    );
+  }
 }
 
 login.propTypes = {
-    classes: PropTypes.object.isRequired,
-    loginUser: PropTypes.func.isRequired,
-    user: PropTypes.object.isRequired,
-    UI: PropTypes.object.isRequired,
-}
+  classes: PropTypes.object.isRequired,
+  loginUser: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
+  UI: PropTypes.object.isRequired
+};
 
-const mapStateToProps = (state) => ({
-    user: state.user,
-    UI: state.UI,
+const mapStateToProps = state => ({
+  user: state.user,
+  UI: state.UI
 });
 
 const mapActionsToProps = {
-    loginUser,
+  loginUser
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(login));
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(withStyles(styles)(login));

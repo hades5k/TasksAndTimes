@@ -1,56 +1,55 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 // MUI
-import Grid from '@material-ui/core/Grid';
+import Grid from "@material-ui/core/Grid";
 
 // APP COMPONENTS
-import Scream from '../components/Scream';
-import Profile from '../components/Profile';
+import Scream from "../components/scream/Scream";
+import Profile from "../components/profile/Profile";
 
 // Redux
-import { connect } from 'react-redux';
-import { getScreams } from '../redux/actions/dataActions';
+import { connect } from "react-redux";
+import { getScreams } from "../redux/actions/dataActions";
 
 class home extends Component {
+  state = {
+    screams: null
+  };
 
-    state = {
-        screams: null
-    };
+  componentDidMount() {
+    this.props.getScreams();
+  }
 
-    componentDidMount() {
-        this.props.getScreams();
-    }
+  render() {
+    const { screams, loading } = this.props.data;
+    let recentScreamsMarkup = !loading ? (
+      screams.map(scream => <Scream key={scream.screamId} scream={scream} />)
+    ) : (
+      <p>Loading ...</p>
+    );
 
-    render() {
-        const { screams, loading } = this.props.data;
-        let recentScreamsMarkup = !loading ? (
-            screams.map(scream => <Scream key={scream.screamId} scream={scream} />)
-        ) : (
-                <p>Loading ...</p>
-            );
-
-        return (
-            < Grid container spacing={3} >
-                <Grid item sm={8} xs={12}>
-                    {recentScreamsMarkup}
-                </Grid>
-                <Grid item sm={4} xs={3}>
-                    <Profile />
-                </Grid>
-            </Grid >
-        )
-    }
+    return (
+      <Grid container spacing={3}>
+        <Grid item sm={8} xs={12}>
+          {recentScreamsMarkup}
+        </Grid>
+        <Grid item sm={4} xs={3}>
+          <Profile />
+        </Grid>
+      </Grid>
+    );
+  }
 }
 
 home.propTypes = {
-    getScreams: PropTypes.func.isRequired,
-    data: PropTypes.object.isRequired,
+  getScreams: PropTypes.func.isRequired,
+  data: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-    data: state.data,
+const mapStateToProps = state => ({
+  data: state.data
 });
 
 // autre façon de passer une méthode (getScreams) au lieu de faire un objet... Pour référence
-export default connect(mapStateToProps, { getScreams })(home); 
+export default connect(mapStateToProps, { getScreams })(home);
