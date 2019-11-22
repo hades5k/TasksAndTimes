@@ -10,11 +10,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 
 // ICONS
-import {
-  Chat as ChatIcon,
-  Favorite as FavoriteIcon,
-  FavoriteBorder
-} from "@material-ui/icons";
+import { Chat as ChatIcon } from "@material-ui/icons";
 
 // TIER
 import dayjs from "dayjs";
