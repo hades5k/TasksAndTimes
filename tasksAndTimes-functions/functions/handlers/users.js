@@ -4,14 +4,18 @@ const config = require('../util/config');
 const firebase = require('firebase');
 firebase.initializeApp(config);
 
-const { validateSignupData, validateLoginData, reduceUserDetails } = require('../util/validators');
+const {
+    validateSignupData,
+    validateLoginData,
+    reduceUserDetails
+} = require('../util/validators');
 
 exports.signup = (req, res) => {
     const newUser = {
         email: req.body.email,
         password: req.body.password,
         confirmPassword: req.body.confirmPassword,
-        handle: req.body.handle,
+        handle: req.body.handle
     };
 
     const { valid, errors } = validateSignupData(newUser); // destructuring
@@ -20,11 +24,13 @@ exports.signup = (req, res) => {
     const noImg = 'no-img.png';
 
     let token, userId;
-    db.doc(`/screams/${newUser.handle}`)
+    db.doc(`/users/${newUser.handle}`)
         .get()
         .then(doc => {
             if (doc.exists) {
-                return res.status(400).json({ handle: 'This handle is already taken' });
+                return res
+                    .status(400)
+                    .json({ handle: 'This handle is already taken' });
             }
 
             return firebase
@@ -41,9 +47,11 @@ exports.signup = (req, res) => {
                         email: newUser.email,
                         createdAt: new Date().toISOString(),
                         imageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
-                        userId, // pas besoin de mettre userId: userId  puisque c'est le même nom
+                        userId // pas besoin de mettre userId: userId  puisque c'est le même nom
                     };
-                    return db.doc(`/users/${newUser.handle}`).set(userCredentials);
+                    return db
+                        .doc(`/users/${newUser.handle}`)
+                        .set(userCredentials);
                 })
                 .then(() => {
                     return res.status(201).json({ token });
@@ -52,10 +60,16 @@ exports.signup = (req, res) => {
                     console.error(err);
 
                     if (err.code === 'auth/email-already-in-use') {
-                        return res.status(400).json({ email: 'Email is already in use' });
+                        return res
+                            .status(400)
+                            .json({ email: 'Email is already in use' });
                     }
 
-                    return res.status(500).json({ general: 'Something went wrong. Please try again' });
+                    return res
+                        .status(500)
+                        .json({
+                            general: 'Something went wrong. Please try again'
+                        });
                 });
         });
 };
@@ -63,13 +77,15 @@ exports.signup = (req, res) => {
 exports.login = (req, res) => {
     const user = {
         email: req.body.email,
-        password: req.body.password,
+        password: req.body.password
     };
 
     const { valid, errors } = validateLoginData(user); // destructuring
     if (!valid) return res.status(400).json(errors);
 
-    firebase.auth().signInWithEmailAndPassword(user.email, user.password)
+    firebase
+        .auth()
+        .signInWithEmailAndPassword(user.email, user.password)
         .then(data => {
             return data.user.getIdToken();
         })
@@ -85,7 +101,9 @@ exports.login = (req, res) => {
             // if (err.code === 'auth/wrong-password') {
             //     return res.status(403).json({ general: 'Wrong credentials, please try again' });
             // }
-            return res.status(403).json({ general: 'Wrong credentials. Please try again' });
+            return res
+                .status(403)
+                .json({ general: 'Wrong credentials. Please try again' });
 
             return res.status(500).json({ error: err.code });
         });
@@ -94,11 +112,13 @@ exports.login = (req, res) => {
 // Get any user's details
 exports.getUserDetails = (req, res) => {
     let userData = {};
-    db.doc(`/users/${req.params.handle}`).get()
+    db.doc(`/users/${req.params.handle}`)
+        .get()
         .then(doc => {
             if (doc.exists) {
                 userData.user = doc.data();
-                return db.collection('screams')
+                return db
+                    .collection('screams')
                     .where('userHandle', '==', req.params.handle)
                     .orderBy('createdAt', 'desc')
                     .get();
@@ -117,24 +137,28 @@ exports.getUserDetails = (req, res) => {
                     likeCount: doc.data().likeCount,
                     commentCount: doc.data().commentCount,
                     screamId: doc.id
-                })
+                });
             });
             return res.json(userData);
         })
         .catch(err => {
             console.error(err);
             return res.status(500).json({ error: err.code });
-        })
+        });
 };
 
 // Get own user details
 exports.getAuthenticatedUser = (req, res) => {
     let userData = {};
-    db.doc(`/users/${req.user.handle}`).get()
+    db.doc(`/users/${req.user.handle}`)
+        .get()
         .then(doc => {
             if (doc.exists) {
                 userData.credentials = doc.data();
-                return db.collection('likes').where('userHandle', '==', req.user.handle).get();
+                return db
+                    .collection('likes')
+                    .where('userHandle', '==', req.user.handle)
+                    .get();
             }
         })
         .then(data => {
@@ -142,7 +166,8 @@ exports.getAuthenticatedUser = (req, res) => {
             data.forEach(doc => {
                 userData.likes.push(doc.data());
             });
-            return db.collection('notifications')
+            return db
+                .collection('notifications')
                 .where('recipient', '==', req.user.handle)
                 .orderBy('createdAt', 'desc')
                 .limit(10)
@@ -166,7 +191,7 @@ exports.getAuthenticatedUser = (req, res) => {
         .catch(err => {
             console.error(err);
             return res.status(500).json({ error: err.code });
-        })
+        });
 };
 
 // Add user details
@@ -181,7 +206,7 @@ exports.addUserDetails = (req, res) => {
         .catch(err => {
             console.error('');
             return res.status(500).json({ error: err.code });
-        })
+        });
 };
 
 // Add image to user profile
@@ -201,22 +226,29 @@ exports.uploadImage = (req, res) => {
             return res.status(400).json({ error: 'Wrong filetype submitted' });
         }
 
-        const imageExtension = filename.split('.')[filename.split('.').length - 1];
-        imageFilename = `${Math.round(Math.random() * 100000000000)}.${imageExtension}`;
+        const imageExtension = filename.split('.')[
+            filename.split('.').length - 1
+        ];
+        imageFilename = `${Math.round(
+            Math.random() * 100000000000
+        )}.${imageExtension}`;
         const filepath = path.join(os.tmpdir(), imageFilename);
 
         imageToBeUploaded = { filepath, mimetype };
         file.pipe(fs.createWriteStream(filepath));
     });
     busboy.on('finish', () => {
-        admin.storage().bucket().upload(imageToBeUploaded.filepath, {
-            resumable: false,
-            metadata: {
+        admin
+            .storage()
+            .bucket()
+            .upload(imageToBeUploaded.filepath, {
+                resumable: false,
                 metadata: {
-                    contentType: imageToBeUploaded.mimetype,
+                    metadata: {
+                        contentType: imageToBeUploaded.mimetype
+                    }
                 }
-            }
-        })
+            })
             .then(() => {
                 const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${imageFilename}?alt=media`;
                 return db.doc(`/users/${req.user.handle}`).update({ imageUrl });
@@ -227,7 +259,7 @@ exports.uploadImage = (req, res) => {
             .catch(err => {
                 console.error(err);
                 return res.status(500).json({ error: err.code });
-            })
+            });
     });
     busboy.end(req.rawBody);
 };
@@ -238,7 +270,8 @@ exports.markNotificationsRead = (req, res) => {
         const notification = db.doc(`/notifications/${notificationId}`);
         batch.update(notification, { read: true });
     });
-    batch.commit()
+    batch
+        .commit()
         .then(() => {
             return res.json({ message: 'Notifications marked as read' });
         })
@@ -246,4 +279,4 @@ exports.markNotificationsRead = (req, res) => {
             console.error(err);
             return res.status(500).json({ error: err.code });
         });
-}
+};
